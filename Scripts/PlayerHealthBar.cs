@@ -4,8 +4,11 @@ using Unity.Mathematics;
 namespace HealthBars.Scripts {
     public class PlayerHealthBar : HealthBar, IPoolable {
         public static bool HasHealthBar(EntityMonoBehaviour entity) {
+            bool isLocalPlayer = entity == Manager.main.player;
+            bool showOnLocalPlayer = Options.ShowOnSelf && entity == Manager.main.player;
+            bool isRemotePlayer = entity.objectInfo.objectType == ObjectType.PlayerType && !isLocalPlayer;
             return entity.entityExist
-                && (entity.objectInfo.objectType == ObjectType.PlayerType && entity != Manager.main.player)
+                && (isRemotePlayer || (showOnLocalPlayer && isLocalPlayer))
                 && entity.GetMaxHealth() > 1;
         }
 
